@@ -1,0 +1,17 @@
+services:
+  - type: web_service
+    name: online-backend
+    env: node
+    plan: free
+    buildCommand: cd Backend && npm install
+    startCommand: cd Backend && npm start
+    envVars:
+      - key: MONGO_URI
+      - key: JWT_SECRET
+
+  - type: static_site
+    name: online-frontend
+    env: static
+    plan: free
+    buildCommand: cd Frontend && npm install && npm run build
+    publishPath: Frontend/dist
