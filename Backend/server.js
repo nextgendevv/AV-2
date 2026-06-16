@@ -15,6 +15,17 @@ connectDB();
 app.use(cors({ origin: true, credentials: true }));
 app.options('*', cors({ origin: true, credentials: true }));
 
+// Fallback: set explicit CORS headers for requests (useful if some proxies strip CORS)
+app.use((req, res, next) => {
+  const allowed = process.env.ALLOWED_ORIGIN || '*';
+  res.header('Access-Control-Allow-Origin', allowed);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
