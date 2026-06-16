@@ -11,7 +11,9 @@ const app = express();
 
 connectDB();
 
-app.use(cors());
+// Enable CORS for all origins and support preflight requests
+app.use(cors({ origin: true, credentials: true }));
+app.options('*', cors({ origin: true, credentials: true }));
 
 app.use(express.json());
 
