@@ -13,7 +13,6 @@ connectDB();
 
 // Enable CORS for all origins and support preflight requests
 app.use(cors({ origin: true, credentials: true }));
-app.options('*', cors({ origin: true, credentials: true }));
 
 // Fallback: set explicit CORS headers for requests (useful if some proxies strip CORS)
 app.use((req, res, next) => {
