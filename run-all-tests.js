@@ -17,6 +17,10 @@ const tests = [
   {
     name: "Wallet Flow Integration Tests",
     file: "tests/wallet-api.test.js"
+  },
+  {
+    name: "Wallet Route Existence Tests",
+    file: "tests/wallet-routes.test.js"
   }
 ];
 
