@@ -10,6 +10,7 @@ import Home from './Home'
 function App() {
   const [view, setView] = useState('login')
   const [user, setUser] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     const storedUser = localStorage.getItem('authUser')
@@ -35,7 +36,10 @@ function App() {
     localStorage.removeItem('authUser')
     setUser(null)
     setView('login')
-    setMobileMenuOpen(false)
+  }
+
+  function handleRefresh() {
+    setRefreshKey((prev) => prev + 1)
   }
 
   if (view === 'login') return <Login onSwitch={setView} onAuth={handleAuth} />
@@ -74,9 +78,9 @@ function App() {
 
       <main className="container">
         {view === 'home' && <Home user={user} />}
-        {view === 'profile' && <Profile user={user} onLogout={handleLogout} />}
-        {view === 'wallet' && <Wallet user={user} />}
-        {view === 'topup' && <TopUp user={user} />}
+        {view === 'profile' && <Profile user={user} refreshKey={refreshKey} onLogout={handleLogout} />}
+        {view === 'wallet' && <Wallet user={user} onSwitchView={setView} />}
+        {view === 'topup' && <TopUp user={user} onTopUpSuccess={handleRefresh} />}
       </main>
 
       <nav className="bottom-nav">

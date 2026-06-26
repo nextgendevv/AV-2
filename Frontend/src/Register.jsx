@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth'
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  throw new Error("VITE_API_URL is not configured in environment variables");
+}
 
 export default function Register({ onSwitch = () => {} }) {
   const [name, setName] = useState('')
@@ -22,7 +26,7 @@ export default function Register({ onSwitch = () => {} }) {
 
     setLoading(true)
     try {
-      const response = await fetch(`${API_URL}/register`, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

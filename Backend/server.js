@@ -6,6 +6,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -18,8 +19,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
+
+if (!PORT) {
+  throw new Error("PORT is not configured in environment variables");
+}
 
 const startServer = async () => {
   await connectDB();

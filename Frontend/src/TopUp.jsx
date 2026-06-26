@@ -1,14 +1,60 @@
 import React, { useState } from 'react'
 
-export default function TopUp({ user = null, onClose = () => {} }) {
+export default function TopUp({ user = null, onTopUpSuccess = () => {} }) {
   const [amount, setAmount] = useState('')
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  function handleTopUp(e) {
+  async function handleTopUp(e) {
     e.preventDefault()
-    if (!amount) return
-    // Simulate payment gateway integration
-    alert(`Processing TopUp of ₹${amount} via Razorpay`)
-    setAmount('')
+    setError('')
+    setMessage('')
+
+    const topUpAmount = Number(amount)
+    if (!topUpAmount || topUpAmount <= 0) {
+      setError('Enter a valid amount to top up.')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const token = localStorage.getItem('authToken')
+      if (!token) {
+        setError('You must be logged in to top up.')
+        return
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/activities`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: 'purchase',
+          title: 'Wallet TopUp',
+          description: `Added ₹${topUpAmount} to wallet`,
+          amount: topUpAmount,
+          metadata: { method: 'Razorpay' },
+        }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        setError(data.message || 'Top up failed.')
+        return
+      }
+
+      setMessage(`Top up successful: ₹${topUpAmount} added.`)
+      setAmount('')
+      onTopUpSuccess()
+    } catch (err) {
+      console.error(err)
+      setError('Unable to process top up. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

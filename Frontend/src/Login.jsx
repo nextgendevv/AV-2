@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth'
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  throw new Error("VITE_API_URL is not configured in environment variables");
+}
 
 export default function Login({ onSwitch = () => {}, onAuth = () => {} }) {
   const [identifier, setIdentifier] = useState('')
@@ -19,7 +23,7 @@ export default function Login({ onSwitch = () => {}, onAuth = () => {} }) {
 
     setLoading(true)
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
