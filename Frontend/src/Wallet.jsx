@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function Wallet({ user = null, onSwitchView = () => {} }) {
+export default function Wallet({ user = null, onSwitchView = () => {}, onUnauthorized = () => {} }) {
   const [balances, setBalances] = useState({
     availableBalance: 0,
     cashbackWallet: 0,
@@ -32,6 +32,10 @@ export default function Wallet({ user = null, onSwitchView = () => {} }) {
           Authorization: `Bearer ${token}`
         }
       })
+      if (response.status === 401) {
+        onUnauthorized()
+        return
+      }
       const data = await response.json()
       if (!response.ok) {
         setError(data.message || 'Failed to load wallet balances.')
@@ -85,6 +89,10 @@ export default function Wallet({ user = null, onSwitchView = () => {} }) {
           amount: transferAmount
         })
       })
+      if (response.status === 401) {
+        onUnauthorized()
+        return
+      }
       const data = await response.json()
       if (!response.ok) {
         setError(data.message || 'Transfer failed.')
@@ -132,6 +140,10 @@ export default function Wallet({ user = null, onSwitchView = () => {} }) {
           amount: withdrawAmount
         })
       })
+      if (response.status === 401) {
+        onUnauthorized()
+        return
+      }
       const data = await response.json()
       if (!response.ok) {
         setError(data.message || 'Withdrawal failed.')

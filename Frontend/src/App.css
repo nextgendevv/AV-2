@@ -127,7 +127,7 @@ body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; 
   .status-avatar { width: 56px; height: 56px; }
   .status-name { font-size: 16px; }
   .compact-card .status-value { font-size: 20px; }
-  .home-status { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .home-status { grid-template-columns: 1fr; gap: 12px; }
   .hero-preview { align-self: stretch; }
   .hero-image { min-height: 320px; border-radius: 30px; }
   .hero-callout { top: 22px; right: 22px; left: auto; }
@@ -179,6 +179,9 @@ body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; 
   .profile-content { grid-template-columns: 1fr; }
   .wallet-grid { grid-template-columns: 1fr 1fr }
   .wallet.large { grid-column: auto }
+  .profile-menu { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .profile-menu .menu-item { flex: 1 1 calc(50% - 8px); text-align: center; justify-content: center; font-size: 14px; padding: 10px 12px; }
+  .profile-menu .menu-actions { width: 100%; justify-content: center; margin-top: 12px; }
 }
 
 /* Wallet page styles */

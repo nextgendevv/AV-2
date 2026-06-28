@@ -13,6 +13,17 @@ function App() {
   const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
+    // Capture referral query param if present
+    const params = new URLSearchParams(window.location.search)
+    const ref = params.get('ref')
+    if (ref) {
+      sessionStorage.setItem('referredBy', ref)
+      setView('register')
+      // Clear URL parameter without refreshing the page
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, document.title, newUrl)
+    }
+
     const storedUser = localStorage.getItem('authUser')
     if (storedUser) {
       setUser(JSON.parse(storedUser))
@@ -32,6 +43,13 @@ function App() {
   }
 
   function handleLogout() {
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('authUser')
+    setUser(null)
+    setView('login')
+  }
+
+  function handleUnauthorized() {
     localStorage.removeItem('authToken')
     localStorage.removeItem('authUser')
     setUser(null)
@@ -77,10 +95,10 @@ function App() {
       </header>
 
       <main className="container">
-        {view === 'home' && <Home user={user} />}
-        {view === 'profile' && <Profile user={user} refreshKey={refreshKey} onLogout={handleLogout} />}
-        {view === 'wallet' && <Wallet user={user} onSwitchView={setView} />}
-        {view === 'topup' && <TopUp user={user} onTopUpSuccess={handleRefresh} />}
+        {view === 'home' && <Home user={user} onUnauthorized={handleUnauthorized} />}
+        {view === 'profile' && <Profile user={user} refreshKey={refreshKey} onLogout={handleLogout} onUnauthorized={handleUnauthorized} />}
+        {view === 'wallet' && <Wallet user={user} onSwitchView={setView} onUnauthorized={handleUnauthorized} />}
+        {view === 'topup' && <TopUp user={user} onTopUpSuccess={handleRefresh} onUnauthorized={handleUnauthorized} />}
       </main>
 
       <nav className="bottom-nav">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export default function TopUp({ user = null, onTopUpSuccess = () => {} }) {
+export default function TopUp({ user = null, onTopUpSuccess = () => {}, onUnauthorized = () => {} }) {
   const [amount, setAmount] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -39,6 +39,11 @@ export default function TopUp({ user = null, onTopUpSuccess = () => {} }) {
           metadata: { method: 'Razorpay' },
         }),
       })
+
+      if (response.status === 401) {
+        onUnauthorized()
+        return
+      }
 
       const data = await response.json()
       if (!response.ok) {

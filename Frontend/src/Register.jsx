@@ -10,6 +10,7 @@ export default function Register({ onSwitch = () => {} }) {
   const [name, setName] = useState('')
   const [contact, setContact] = useState('')
   const [password, setPassword] = useState('')
+  const [referredBy, setReferredBy] = useState(sessionStorage.getItem('referredBy') || '')
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -31,7 +32,7 @@ export default function Register({ onSwitch = () => {} }) {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name: name.trim(), contact: contact.trim(), password })
+        body: JSON.stringify({ name: name.trim(), contact: contact.trim(), password, referredBy })
       })
 
       const data = await response.json()
@@ -44,6 +45,7 @@ export default function Register({ onSwitch = () => {} }) {
       setName('')
       setContact('')
       setPassword('')
+      sessionStorage.removeItem('referredBy')
       setTimeout(() => onSwitch('login'), 400)
     } catch (err) {
       console.error(err)
@@ -88,6 +90,12 @@ export default function Register({ onSwitch = () => {} }) {
             placeholder="Create password"
           />
         </div>
+
+        {referredBy && (
+          <div className="field" style={{ margin: '8px 0', fontSize: '13px', color: '#10b981', fontWeight: 600, textAlign: 'left' }}>
+            ✓ Referral Applied (Code: {referredBy.slice(0, 8)}...)
+          </div>
+        )}
 
         {error && <div className="error-message">{error}</div>}
         {message && <div className="success-message">{message}</div>}

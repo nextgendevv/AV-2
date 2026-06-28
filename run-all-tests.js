@@ -21,6 +21,26 @@ const tests = [
   {
     name: "Wallet Route Existence Tests",
     file: "tests/wallet-routes.test.js"
+  },
+  {
+    name: "Real-Time Workflow Integration Tests",
+    file: "tests/realtime-flow.test.js"
+  },
+  {
+    name: "Home Page Layout Tests",
+    file: "tests/home.test.js"
+  },
+  {
+    name: "Profile Page Layout Tests",
+    file: "tests/profile.test.js"
+  },
+  {
+    name: "Top-Up Page Layout Tests",
+    file: "tests/topup.test.js"
+  },
+  {
+    name: "Wallet Page Layout Tests",
+    file: "tests/wallet.test.js"
   }
 ];
 

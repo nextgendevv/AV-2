@@ -4,18 +4,17 @@ const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
   try {
-    const { name, email, contact, password } = req.body;
+    const { name, email, contact, password, referredBy } = req.body;
 
     if (!name || !contact || !password) {
       return res.status(400).json({ message: "Name, contact and password are required." });
     }
 
-    const existingUser = await User.findOne({
-      $or: [
-        { email: email || null },
-        { contact: contact }
-      ]
-    });
+    // Build the OR query — only include email when it is actually supplied
+    const orConditions = [{ contact }];
+    if (email) orConditions.push({ email });
+
+    const existingUser = await User.findOne({ $or: orConditions });
 
     if (existingUser) {
       return res.status(400).json({ message: "User already exists with this email or contact." });
@@ -29,6 +28,53 @@ const register = async (req, res) => {
       contact,
       password: hashedPassword
     });
+
+    // Check if user registered via a referral link
+    if (referredBy) {
+      const mongoose = require("mongoose");
+      if (mongoose.Types.ObjectId.isValid(referredBy)) {
+        const referrer = await User.findById(referredBy);
+        if (referrer) {
+          // 1. Add referral record
+          referrer.referrals.unshift({
+            name: user.name,
+            contact: user.contact,
+            status: "Active",
+            referredAt: new Date()
+          });
+
+          // 2. Add Earning (₹50 referral bonus)
+          const referralBonus = 50.00;
+          referrer.earningWallet = Math.round((referrer.earningWallet + referralBonus) * 100) / 100;
+          referrer.earnings.unshift({
+            source: `Referral Reward: ${user.name}`,
+            amount: referralBonus,
+            status: "Completed",
+            createdAt: new Date()
+          });
+
+          // 3. Add Transaction Log
+          referrer.transactions.unshift({
+            transactionType: "Credit",
+            amount: referralBonus,
+            description: `Referral bonus for referring ${user.name}`,
+            balanceAfter: referrer.availableBalance, // availableBalance doesn't change directly until transfer
+            createdAt: new Date()
+          });
+
+          // 4. Add Activity Log
+          referrer.activities.unshift({
+            type: "earning",
+            title: "Referral Bonus Received",
+            description: `Earned ₹${referralBonus} for referring ${user.name}`,
+            amount: referralBonus,
+            createdAt: new Date()
+          });
+
+          await referrer.save();
+        }
+      }
+    }
 
     return res.status(201).json({
       message: "Registration successful. Please login.",
