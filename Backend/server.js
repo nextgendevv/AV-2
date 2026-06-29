@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const connectDB = require("./config/db");
 
@@ -20,6 +21,15 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+
+const frontendDistPath = path.join(__dirname, "../Frontend/dist");
+
+app.use(express.static(frontendDistPath));
+app.get(/^(?!\/api(?:\/|$)).*/, (req, res, next) => {
+  res.sendFile(path.join(frontendDistPath, "index.html"), (err) => {
+    if (err) next(err);
+  });
+});
 
 const PORT = process.env.PORT;
 

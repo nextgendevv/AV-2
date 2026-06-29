@@ -3,7 +3,7 @@ services:
     name: online-backend
     env: node
     plan: free
-    buildCommand: cd Backend && npm install
+    buildCommand: cd Frontend && npm install && VITE_API_URL=/api npm run build && cd ../Backend && npm install
     startCommand: cd Backend && npm start
     envVars:
       - key: MONGO_URI
