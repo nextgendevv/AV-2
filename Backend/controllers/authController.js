@@ -1,129 +1,151 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
+// ================= REGISTER =================
 const register = async (req, res) => {
+  console.log("REGISTER HIT");
+  console.log(req.body);
+
   try {
-    const { name, email, contact, password, referredBy } = req.body;
+    const { name, contact, password, referredBy } = req.body;
 
     if (!name || !contact || !password) {
-      return res.status(400).json({ message: "Name, contact and password are required." });
+      return res.status(400).json({
+        message: "Name, phone/email and password are required."
+      });
     }
 
-    // Build the OR query — only include email when it is actually supplied
-    const orConditions = [{ contact }];
-    if (email) orConditions.push({ email });
+    // Check if input is email or phone
+    const isEmail = contact.includes("@");
 
-    const existingUser = await User.findOne({ $or: orConditions });
+    const query = isEmail
+      ? { email: contact.toLowerCase() }
+      : { contact };
+
+    const existingUser = await User.findOne(query);
 
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists with this email or contact." });
+      return res.status(400).json({
+        message: "User already exists."
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    const userData = {
       name,
-      email: email || null,
-      contact,
       password: hashedPassword
-    });
+    };
 
-    // Check if user registered via a referral link
-    if (referredBy) {
-      const mongoose = require("mongoose");
-      if (mongoose.Types.ObjectId.isValid(referredBy)) {
-        const referrer = await User.findById(referredBy);
-        if (referrer) {
-          // 1. Add referral record
-          referrer.referrals.unshift({
-            name: user.name,
-            contact: user.contact,
-            status: "Active",
-            referredAt: new Date()
-          });
+    if (isEmail) {
+      userData.email = contact.toLowerCase();
+    } else {
+      userData.contact = contact;
+    }
 
-          // 2. Add Earning (₹50 referral bonus)
-          const referralBonus = 50.00;
-          referrer.earningWallet = Math.round((referrer.earningWallet + referralBonus) * 100) / 100;
-          referrer.earnings.unshift({
-            source: `Referral Reward: ${user.name}`,
-            amount: referralBonus,
-            status: "Completed",
-            createdAt: new Date()
-          });
+    const user = await User.create(userData);
 
-          // 3. Add Transaction Log
-          referrer.transactions.unshift({
-            transactionType: "Credit",
-            amount: referralBonus,
-            description: `Referral bonus for referring ${user.name}`,
-            balanceAfter: referrer.availableBalance, // availableBalance doesn't change directly until transfer
-            createdAt: new Date()
-          });
+    // Referral Bonus
+    if (
+      referredBy &&
+      mongoose.Types.ObjectId.isValid(referredBy)
+    ) {
+      const referrer = await User.findById(referredBy);
 
-          // 4. Add Activity Log
-          referrer.activities.unshift({
-            type: "earning",
-            title: "Referral Bonus Received",
-            description: `Earned ₹${referralBonus} for referring ${user.name}`,
-            amount: referralBonus,
-            createdAt: new Date()
-          });
+      if (referrer) {
+        const bonus = 50;
 
-          await referrer.save();
-        }
+        referrer.referrals.unshift({
+          name: user.name,
+          contact: user.contact || user.email,
+          status: "Active"
+        });
+
+        referrer.earningWallet += bonus;
+
+        referrer.earnings.unshift({
+          source: `Referral Reward: ${user.name}`,
+          amount: bonus,
+          status: "Completed"
+        });
+
+        referrer.transactions.unshift({
+          transactionType: "Credit",
+          amount: bonus,
+          description: `Referral bonus for ${user.name}`,
+          balanceAfter: referrer.availableBalance
+        });
+
+        referrer.activities.unshift({
+          type: "earning",
+          title: "Referral Bonus",
+          description: `Earned ₹${bonus}`,
+          amount: bonus
+        });
+
+        await referrer.save();
       }
     }
 
-    return res.status(201).json({
-      message: "Registration successful. Please login.",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        contact: user.contact
-      }
+    res.status(201).json({
+      message: "Registration successful. Please login."
     });
+
   } catch (error) {
+    console.error("REGISTER ERROR");
     console.error(error);
-    return res.status(500).json({ message: "Server error while registering user." });
+
+    res.status(500).json({
+      message: error.message
+    });
   }
 };
 
+// ================= LOGIN =================
 const login = async (req, res) => {
   try {
     const { identifier, password } = req.body;
 
     if (!identifier || !password) {
-      return res.status(400).json({ message: "Identifier and password are required." });
+      return res.status(400).json({
+        message: "Identifier and password are required."
+      });
     }
 
-    const user = await User.findOne({
-      $or: [
-        { email: identifier },
-        { contact: identifier }
-      ]
-    });
+    const isEmail = identifier.includes("@");
+
+    const user = await User.findOne(
+      isEmail
+        ? { email: identifier.toLowerCase() }
+        : { contact: identifier }
+    );
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials." });
+      return res.status(400).json({
+        message: "Invalid credentials."
+      });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials." });
+      return res.status(400).json({
+        message: "Invalid credentials."
+      });
     }
 
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is not configured in environment variables");
-    }
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d"
-    });
-
-    return res.json({
+    res.json({
       message: "Login successful.",
       token,
       user: {
@@ -133,9 +155,14 @@ const login = async (req, res) => {
         contact: user.contact
       }
     });
+
   } catch (error) {
+    console.error("LOGIN ERROR");
     console.error(error);
-    return res.status(500).json({ message: "Server error while logging in." });
+
+    res.status(500).json({
+      message: error.message
+    });
   }
 };
 
