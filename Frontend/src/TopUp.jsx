@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { API_URL, readApiJson } from './api'
 
 export default function TopUp({ user = null, onTopUpSuccess = () => {}, onUnauthorized = () => {} }) {
   const [amount, setAmount] = useState('')
@@ -25,7 +26,7 @@ export default function TopUp({ user = null, onTopUpSuccess = () => {}, onUnauth
         return
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/activities`, {
+      const response = await fetch(`${API_URL}/user/activities`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +46,7 @@ export default function TopUp({ user = null, onTopUpSuccess = () => {}, onUnauth
         return
       }
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Top up failed.')
         return

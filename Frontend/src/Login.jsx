@@ -1,10 +1,5 @@
 import React, { useState } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL;
-
-if (!API_URL) {
-  throw new Error("VITE_API_URL is not configured in environment variables");
-}
+import { API_URL, readApiJson } from './api'
 
 export default function Login({ onSwitch = () => {}, onAuth = () => {} }) {
   const [identifier, setIdentifier] = useState('')
@@ -31,7 +26,7 @@ export default function Login({ onSwitch = () => {}, onAuth = () => {} }) {
         body: JSON.stringify({ identifier: identifier.trim(), password })
       })
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Login failed.')
         return

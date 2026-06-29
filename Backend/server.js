@@ -21,6 +21,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api", (req, res) => {
+  res.status(404).json({ message: "API route not found." });
+});
 
 const frontendDistPath = path.join(__dirname, "../Frontend/dist");
 

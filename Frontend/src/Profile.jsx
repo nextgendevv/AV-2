@@ -1,10 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL
-
-if (!API_URL) {
-  throw new Error('VITE_API_URL is not configured in environment variables')
-}
+import { API_URL, readApiJson } from './api'
 
 const menuItems = [
   { key: 'profile', label: 'Profile' },
@@ -88,7 +83,7 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
         return
       }
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Unable to load section data.')
         setSectionData(null)
@@ -140,7 +135,7 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
         return
       }
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Unable to update M-PIN.')
         return
@@ -185,7 +180,7 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
         return
       }
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Failed to create store.')
         return
@@ -239,7 +234,7 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
         return
       }
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Failed to create referral.')
         return

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { API_URL, readApiJson } from './api'
 
 export default function Wallet({ user = null, onSwitchView = () => {}, onUnauthorized = () => {} }) {
   const [balances, setBalances] = useState({
@@ -27,7 +28,7 @@ export default function Wallet({ user = null, onSwitchView = () => {}, onUnautho
         setError('Login required to view wallet balances.')
         return
       }
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/wallet`, {
+      const response = await fetch(`${API_URL}/user/wallet`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -36,7 +37,7 @@ export default function Wallet({ user = null, onSwitchView = () => {}, onUnautho
         onUnauthorized()
         return
       }
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Failed to load wallet balances.')
         return
@@ -78,7 +79,7 @@ export default function Wallet({ user = null, onSwitchView = () => {}, onUnautho
     setActionLoading(true)
     try {
       const token = localStorage.getItem('authToken')
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/wallet/transfer`, {
+      const response = await fetch(`${API_URL}/user/wallet/transfer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ export default function Wallet({ user = null, onSwitchView = () => {}, onUnautho
         onUnauthorized()
         return
       }
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Transfer failed.')
         return
@@ -130,7 +131,7 @@ export default function Wallet({ user = null, onSwitchView = () => {}, onUnautho
     setActionLoading(true)
     try {
       const token = localStorage.getItem('authToken')
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/wallet/withdraw`, {
+      const response = await fetch(`${API_URL}/user/wallet/withdraw`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +145,7 @@ export default function Wallet({ user = null, onSwitchView = () => {}, onUnautho
         onUnauthorized()
         return
       }
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Withdrawal failed.')
         return

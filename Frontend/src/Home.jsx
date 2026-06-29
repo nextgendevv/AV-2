@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL
-
-if (!API_URL) {
-  throw new Error('VITE_API_URL is not configured in environment variables')
-}
+import { API_URL, readApiJson } from './api'
 
 export default function Home({ user = null, onUnauthorized = () => {} }) {
   const [profileData, setProfileData] = useState(null)
@@ -62,7 +57,7 @@ export default function Home({ user = null, onUnauthorized = () => {} }) {
         onUnauthorized()
         return
       }
-      const profileJson = await profileRes.json()
+      const profileJson = await readApiJson(profileRes)
       if (profileRes.ok) {
         setProfileData(profileJson)
       }
@@ -75,7 +70,7 @@ export default function Home({ user = null, onUnauthorized = () => {} }) {
         onUnauthorized()
         return
       }
-      const walletJson = await walletRes.json()
+      const walletJson = await readApiJson(walletRes)
       if (walletRes.ok) {
         setWalletBalances(walletJson)
       }
@@ -140,7 +135,7 @@ export default function Home({ user = null, onUnauthorized = () => {} }) {
         return
       }
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setOrderError(data.message || 'Order failed.')
         return
@@ -207,7 +202,7 @@ export default function Home({ user = null, onUnauthorized = () => {} }) {
         return
       }
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setBillError(data.message || 'Bill upload failed.')
         return

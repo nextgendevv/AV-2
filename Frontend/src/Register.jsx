@@ -1,10 +1,5 @@
 import React, { useState } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL;
-
-if (!API_URL) {
-  throw new Error("VITE_API_URL is not configured in environment variables");
-}
+import { API_URL, readApiJson } from './api'
 
 export default function Register({ onSwitch = () => {} }) {
   const [name, setName] = useState('')
@@ -35,7 +30,7 @@ export default function Register({ onSwitch = () => {} }) {
         body: JSON.stringify({ name: name.trim(), contact: contact.trim(), password, referredBy })
       })
 
-      const data = await response.json()
+      const data = await readApiJson(response)
       if (!response.ok) {
         setError(data.message || 'Registration failed.')
         return
