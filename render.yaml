@@ -18,4 +18,4 @@ services:
     publishPath: Frontend/dist
     envVars:
       - key: VITE_API_URL
-        value: https://online-backend.onrender.com/api
+        value: https://av-2-ls9k.onrender.com/api
