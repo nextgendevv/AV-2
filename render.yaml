@@ -16,3 +16,6 @@ services:
     plan: free
     buildCommand: cd Frontend && npm install && npm run build
     publishPath: Frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://online-backend.onrender.com/api
