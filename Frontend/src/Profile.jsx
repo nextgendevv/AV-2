@@ -33,6 +33,7 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
   const [error, setError] = useState('')
   const [mpin, setMpin] = useState('')
   const [message, setMessage] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // Store forms state
   const [storeFormOpen, setStoreFormOpen] = useState(false)
@@ -269,7 +270,7 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
           <div className="detail-row"><strong>Name</strong><span>{sectionData?.user?.name || name}</span></div>
           <div className="detail-row"><strong>Contact</strong><span>{contact}</span></div>
           <div className="detail-row"><strong>Email</strong><span>{sectionData?.user?.email || 'Not provided'}</span></div>
-          <div className="detail-row"><strong>Referral Link</strong><span>{sectionData?.referralLink || 'Not available'}</span></div>
+          <div className="detail-row"><strong>Referral Link</strong><span className="long-value">{sectionData?.referralLink || 'Not available'}</span></div>
         </div>
       )
     }
@@ -297,12 +298,12 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
     if (selected === 'referral-link') {
       const shareUrl = sectionData?.referralLink || `${window.location.origin}?ref=${user?.id || ''}`;
       return (
-        <div className="profile-details" style={{ textAlign: 'left' }}>
-          <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '14px' }}>
+        <div className="profile-details">
+          <p className="content-note">
             Share this link to refer friends. When they register, you will instantly receive a ₹50.00 cash reward in your Earning Wallet!
           </p>
-          <div className="detail-row referral-link" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '14px', padding: 0, border: 'none' }}>
-            <span style={{ wordBreak: 'break-all', fontSize: '14px', background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0', fontWeight: '600', color: '#aa3bff' }}>
+          <div className="referral-link-box">
+            <span>
               {shareUrl}
             </span>
             <button 
@@ -524,13 +525,14 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
       </div>
 
       <div className="profile-content">
-        <aside className="profile-menu">
+        <aside className={`profile-menu ${menuOpen ? 'open' : ''}`}>
           {menuItems.map((item) => (
             <button
               key={item.key}
               className={`menu-item ${selected === item.key ? 'active' : ''}`}
               onClick={() => {
                 setSelected(item.key)
+                setMenuOpen(false)
                 setError('')
                 setMessage('')
                 setStoreFormOpen(false)
@@ -549,8 +551,19 @@ export default function Profile({ user = null, refreshKey = 0, onLogout = () => 
 
         <section className="profile-main">
           <div className="section-heading">
-            <h2>{menuItems.find((item) => item.key === selected)?.label || 'Profile'}</h2>
-            <div className="section-sub">Live backend data for this section</div>
+            <div>
+              <h2>{menuItems.find((item) => item.key === selected)?.label || 'Profile'}</h2>
+              <div className="section-sub">Live backend data for this section</div>
+            </div>
+            <button
+              type="button"
+              className="profile-menu-toggle"
+              aria-label="Open profile menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              ☰
+            </button>
           </div>
 
           <div className="wallet-grid">

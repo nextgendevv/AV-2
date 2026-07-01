@@ -193,27 +193,51 @@ body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; 
 .btn { font-size: 14px }
 
 /* Profile page styles (desktop-first responsive) */
-.profile-page { padding: 20px; background: var(--bg); min-height: 100vh; overflow-x: hidden; }
+.profile-page { padding: 20px; background: var(--bg); min-height: 100vh; overflow-x: hidden; color: #111827; font-size: 16px; line-height: 1.45; }
 .profile-top { max-width: 1100px; margin: 0 auto; min-width: 0; }
-.profile-hero { background: #8b0f1a; color: white; padding: 22px; border-radius: 14px; display: flex; align-items: center; gap: 16px }
-.hero-avatar { width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-weight:700 }
-.hero-info .hero-name { font-size: 20px; font-weight: 700 }
-.hero-info .hero-role { color: #ffd166; font-weight: 700; margin-top: 4px }
+.profile-hero { background: linear-gradient(135deg, #8b0f1a, #b71827); color: white; padding: 22px; border-radius: 14px; display: flex; align-items: center; gap: 16px; box-shadow: 0 18px 36px rgba(139, 15, 26, 0.18); }
+.hero-avatar { width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-weight:800; font-size: 22px; border: 1px solid rgba(255,255,255,0.24); }
+.hero-info .hero-name { font-size: 20px; font-weight: 800; line-height: 1.15; }
+.hero-info .hero-role { color: #ffd166; font-size: 12px; font-weight: 900; margin-top: 5px; letter-spacing: 0.04em; }
 
 .profile-content { max-width: 1100px; margin: 18px auto; display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 18px; min-width: 0; }
 .profile-menu { background: var(--card); padding: 14px; border-radius: 12px; box-shadow: var(--shadow); display:flex; flex-direction:column; gap:8px }
 .menu-item { text-align:left; padding: 12px; border-radius: 8px; border: none; background: transparent; display:flex; justify-content:space-between; align-items:center; cursor:pointer; min-width: 0; }
 .menu-item:hover { background: #f8fafc }
+.menu-item.active { background: rgba(14,165,132,0.12); color: #0f172a; font-weight: 800; }
 .menu-actions { margin-top: 10px; display:flex; gap:8px }
 .menu-action { flex:1; padding:10px; border-radius:8px; border:none; cursor:pointer; min-width: 0; }
 .menu-action.danger { background:#fee2e2; color:#b91c1c }
 
-.profile-main { background: var(--card); padding: 14px; border-radius: 12px; box-shadow: var(--shadow); min-width: 0; }
-.wallet-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px }
-.wallet.large { grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center; padding:16px }
-.wallet.small-card { padding:12px }
-.wallet-title { color: var(--muted); font-size: 13px }
-.wallet-amount { font-weight:700; font-size:18px; margin-top:6px }
+.profile-main { background: var(--card); padding: 18px; border-radius: 12px; box-shadow: var(--shadow); min-width: 0; }
+.section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.section-heading h2 { margin: 0; color: #0f172a; font-size: 22px; font-weight: 850; line-height: 1.15; }
+.section-sub { color: #64748b; font-size: 13px; font-weight: 600; margin-top: 3px; }
+.profile-menu-toggle { display: none; width: 38px; height: 38px; flex: 0 0 38px; align-items: center; justify-content: center; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; color: #0f172a; font-size: 20px; font-weight: 900; line-height: 1; cursor: pointer; }
+.wallet-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-bottom: 16px; }
+.wallet { background: linear-gradient(180deg, #ffffff, #f8fafc); border: 1px solid #e8eef6; border-radius: 12px; }
+.wallet.large { grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center; gap: 12px; padding:16px; background: linear-gradient(135deg, #f8fafc, #eefdf8); }
+.wallet.small-card { padding:14px }
+.wallet-title { color: #64748b; font-size: 12px; font-weight: 800; line-height: 1.25; }
+.wallet-amount { color: #020617; font-weight:850; font-size:20px; line-height: 1.15; margin-top:7px; overflow-wrap: anywhere; }
+.activity-section { margin-top: 4px; }
+.profile-details,
+.mpin-form,
+.activity-list { display: flex; flex-direction: column; gap: 10px; }
+.detail-row { display: grid; grid-template-columns: minmax(96px, 0.42fr) minmax(0, 1fr); align-items: start; gap: 12px; padding: 12px; background: #f8fafc; border: 1px solid #e8eef6; border-radius: 10px; }
+.detail-row strong { color: #64748b; font-size: 12px; font-weight: 850; line-height: 1.25; }
+.detail-row span { color: #0f172a; font-size: 14px; font-weight: 750; line-height: 1.35; min-width: 0; }
+.long-value { overflow-wrap: anywhere; word-break: break-word; }
+.content-note { color: #475569; font-size: 14px; font-weight: 600; line-height: 1.5; margin: 0; }
+.referral-link-box { display: flex; flex-direction: column; gap: 12px; }
+.referral-link-box span { color: #7c2d12; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 750; line-height: 1.4; overflow-wrap: anywhere; word-break: break-word; }
+.activity-item { padding: 13px; background: #f8fafc; border: 1px solid #e8eef6; border-radius: 10px; color: #0f172a; font-size: 14px; line-height: 1.4; }
+.activity-item strong { font-size: 15px; font-weight: 850; }
+.activity-meta { color: #64748b; font-size: 12px; font-weight: 700; margin-top: 6px; overflow-wrap: anywhere; }
+.activity-empty,
+.activity-loading { padding: 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; color: #64748b; font-size: 14px; font-weight: 700; text-align: center; }
+.mpin-form .field { margin-bottom: 4px; }
+.mpin-form label { color: #334155; font-size: 13px; font-weight: 800; }
 
 @media (max-width: 900px) {
   .profile-content { grid-template-columns: minmax(0, 1fr); }
@@ -269,20 +293,36 @@ body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; 
 }
 
 @media (max-width: 600px) {
-  .profile-page { min-height: 100svh; padding: 16px 10px calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 28px); }
-  .profile-hero { padding: 18px; border-radius: 10px; }
-  .hero-avatar { width: 58px; height: 58px; flex: 0 0 58px; }
+  .profile-page { min-height: 100svh; padding: 10px 10px calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 28px); font-size: 15px; }
+  .profile-hero { padding: 14px; border-radius: 10px; gap: 12px; }
+  .hero-avatar { width: 46px; height: 46px; flex: 0 0 46px; font-size: 17px; }
+  .hero-info .hero-name { font-size: 17px; }
+  .hero-info .hero-role { font-size: 10px; }
   .profile-content { margin-top: 14px; gap: 14px; }
-  .profile-menu { display: flex; flex-direction: row; gap: 8px; overflow-x: auto; padding: 8px; border-radius: 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .profile-menu::-webkit-scrollbar { display: none; }
-  .profile-menu .menu-item { flex: 0 0 auto; width: auto; min-width: max-content; padding: 8px 10px; font-size: 12px; line-height: 1.2; white-space: nowrap; }
-  .profile-menu .menu-actions { flex: 0 0 auto; width: auto; display: flex; grid-column: auto; grid-template-columns: none; gap: 8px; margin-top: 0; }
-  .profile-menu .menu-action { flex: 0 0 auto; padding: 8px 10px; font-size: 12px; white-space: nowrap; }
-  .profile-main { padding: 12px; border-radius: 10px; }
+  .profile-menu { display: none; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 10px; border-radius: 10px; }
+  .profile-menu.open { display: grid; }
+  .profile-menu .menu-item { width: 100%; min-width: 0; padding: 9px 8px; font-size: 12px; line-height: 1.25; text-align: center; justify-content: center; white-space: normal; overflow-wrap: anywhere; }
+  .profile-menu .menu-actions { width: 100%; display: grid; grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 0; }
+  .profile-menu .menu-action { min-width: 0; padding: 9px 8px; font-size: 12px; }
+  .profile-main { padding: 13px; border-radius: 10px; }
+  .section-heading { align-items: center; margin-bottom: 14px; }
+  .section-heading h2 { font-size: 17px; }
+  .section-sub { font-size: 11px; margin-top: 2px; }
+  .profile-menu-toggle { display: inline-flex; }
   .wallet-grid { grid-template-columns: minmax(0, 1fr); }
   .wallet.large { grid-column: auto; }
   .wallet { min-width: 0; }
   .wallet.large,
   .wallet.small-card { padding: 12px; }
-  .section-heading h2 { margin-top: 0; font-size: 18px; }
+  .wallet-title { font-size: 11px; }
+  .wallet-amount { font-size: 17px; }
+  .detail-row { grid-template-columns: 1fr; gap: 4px; padding: 11px; }
+  .detail-row strong { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .detail-row span,
+  .content-note,
+  .referral-link-box span,
+  .activity-item { font-size: 13px; }
+  .activity-item strong { font-size: 14px; }
+  .activity-empty,
+  .activity-loading { font-size: 13px; padding: 14px; }
 }
